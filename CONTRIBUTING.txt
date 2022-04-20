@@ -1,0 +1,7 @@
+One of the main spaces of the platform www.human-music.com is the feedback section, where users engage are intended to engage in a conversation related to what functionalities
+are good to add to it. What they seems as valuable. The idea is to realize which of this functionalities are beneficial for the whole system, and with that understanding
+start building them into the platform. When I started building this I did not have any clue about coding at all, so there is also a lot of functionalities that I envision as
+important but are not there yet. 
+
+This project is intended to be as open as it can be, from the recommendations of music to the way the platform is built, so feel free to contribute with what you think will 
+be valuable for enhancing the experience of whoever comes in here to discover new music.

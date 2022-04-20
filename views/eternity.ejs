@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="/stylesheets/normal.css">
+    <title>The Infinite Jest</title>
+</head>
+
+<body>
+
+    <h1>The Infinite Jest</h1>
+
+    <div class="iFrameContainer" id="mediaContainer">
+        <iframe id="presentPlayer" width="640" height="360"
+            src="https://www.youtube.com/embed/<%= youtubeID %>?start=<%=elapsedSeconds%>&autoplay=1&enablejsapi=1&mute=1"
+            style="border: solid 4px #37474F" allow="autoplay" allowFullScreen></iframe>
+    </div>
+
+    <footer>
+        <a href="#" onclick="changeCSS('/stylesheets/jpfraneto.css', 0);">jpfraneto</a>
+        <a href="#" onclick="changeCSS('/stylesheets/ffraneto.css', 0);">ffraneto</a>
+        <a href="#" onclick="changeCSS('/stylesheets/eternity.css', 0);">eternity</a>
+    </footer>
+
+    <script src="/scripts/eternity.js"></script>
+</body>
+
+</html>

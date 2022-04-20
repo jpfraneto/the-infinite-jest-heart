@@ -1,0 +1,8 @@
+middleware.theSource.js -> This is the file where the functions that make the back end work are. This is purely back end, and it runs on node.js. I will explain here each of the functions and what it is for:
+
+sendRecommendationToPast: Searches for the recommendation that is in the present and changes its status to past. After doing this, it calls the theMind function. The parameter timestampDifference that is added to the recommendation that is sent to the past is for tracking the way the back end is working.
+checkSystem: For updating the state of the system if there was any problem in the back end. It searches for a recommendation who's state is present, and if it is found it checks its endingTimestamp with the current one. With this information it makes a decision: To send it to the past (if the endingTimestamp is lower than the present timestamp) or to set a timer to send it to the past, if it is the other way around.
+theMind: This is the function that goes into the soup of recommendations that the future is and brings from there a random recommendation to the present. If there are no recommendations in the future, it calls the bigBang function.
+bigBang: This one sends all the recommendations that are in the past to the future, so that the whole system starts again. It also creates a new cycle calling the closeCycle function.
+openCycle: Creates a new cycle.
+closeCycle: Closes the actual cycle, recording the amount of recommendations that were elapsed in that one and the duration of the cycle.
