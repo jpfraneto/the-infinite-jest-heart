@@ -12,10 +12,13 @@
 
     <h1>The Infinite Jest</h1>
 
-    <div class="iFrameContainer" id="mediaContainer">
+    <div class="playerWrapper" id="mediaContainer">
         <iframe id="presentPlayer" width="640" height="360"
             src="https://www.youtube.com/embed/<%= youtubeID %>?start=<%=elapsedSeconds%>&autoplay=1&enablejsapi=1&mute=1"
-            style="border: solid 4px #37474F" allow="autoplay" allowFullScreen></iframe>
+            class='rainbowBox' allow="autoplay" allowFullScreen></iframe>
+    </div>
+    <div id="btn-container">
+        <a href="https://www.theinfinitejest.tv">Enter</a>
     </div>
 
     <footer>
