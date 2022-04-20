@@ -6,9 +6,6 @@ let express = require('express'),
   bodyParser = require('body-parser'),
   mongoose = require('mongoose'),
   flash = require('connect-flash'),
-  passport = require('passport'),
-  session = require('express-session'),
-  LocalStrategy = require('passport-local'),
   methodOverride = require('method-override'),
   Recommendation = require('./models/recommendation'),
   User = require('./models/user'),
@@ -31,6 +28,7 @@ mongoose.connect(process.env.DATABASE_MONGODB, {
 
 app.use(express.json());
 app.set('view engine', 'ejs');
+app.set('trust proxy', 1);
 
 app.use(express.urlencoded({ extended: true }));
 app.use(methodOverride('_method'));
@@ -50,34 +48,6 @@ if (process.env.NODE_ENV === 'production') {
 
 console.log('The app.js file is running again.');
 setTimeout(theSource.checkSystem);
-
-const sessionConfig = {
-  secret: 'Music to nourish your soul and activate your mind',
-  resave: false,
-  saveUninitialized: true,
-  cookie: {
-    httpOnly: true,
-    expires: Date.now() + 1000 * 60 * 60 * 24 * 7,
-    maxAge: 1000 * 60 * 60 * 24 * 7,
-  },
-};
-
-app.use(session(sessionConfig));
-app.use(flash());
-
-app.use(passport.initialize());
-app.use(passport.session());
-passport.use(new LocalStrategy(User.authenticate()));
-
-passport.serializeUser(User.serializeUser());
-passport.deserializeUser(User.deserializeUser());
-
-app.use(function (req, res, next) {
-  res.locals.currentUser = req.user;
-  res.locals.error = req.flash('error');
-  res.locals.success = req.flash('success');
-  next();
-});
 
 app.use('/', indexRoutes);
 

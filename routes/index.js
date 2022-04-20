@@ -2,8 +2,6 @@ const axios = require('axios');
 const moment = require('moment');
 let express = require('express');
 let router = express.Router();
-let passport = require('passport');
-let User = require('../models/user');
 const middlewareObj = require('../middleware');
 let Recommendation = require('../models/recommendation');
 let Cycle = require('../models/cycle');
@@ -38,26 +36,9 @@ router.get('/', (req, res) => {
 //CREATE - add new recommendation to db
 router.post('/', function (req, res) {
   let newRecommendation = new Recommendation();
-  if (!req.user) {
-    newRecommendation.author = {
-      name: req.body.name,
-      country: req.body.country,
-      email: req.body.email,
-    };
-  } else {
-    newRecommendation.author = {
-      id: req.user._id,
-      username: req.user.username,
-      country: req.user.country,
-      name: req.user.username,
-      language: req.user.language,
-    };
-  }
-  newRecommendation.description = req.body.description;
-  newRecommendation.language = req.body.language;
   newRecommendation.status = 'future';
-  newRecommendation.type = 'music';
-  newRecommendation.reviewed = false;
+  newRecommendation.type = 'video';
+  newRecommendation.reviewed = true;
   newRecommendation.recommendationDate = new Date();
   let url, duration, name;
   newRecommendation.youtubeID = req.body.newRecommendationID;
@@ -73,30 +54,19 @@ router.post('/', function (req, res) {
     .then(function (response) {
       if (response.data.items.length > 0) {
         let durationISO = response.data.items[0].contentDetails.duration;
-        newRecommendation.name = response.data.items[0].snippet.title;
         newRecommendation.duration = moment
           .duration(durationISO, moment.ISO_8601)
           .asMilliseconds();
         newRecommendation.save(() => {
-          if (req.user) {
-            req.user.recommendations.push(newRecommendation);
-            req.user.save(() => {
-              console.log('The user was updated with the new recommendation');
-            });
-          }
           console.log(
-            'A new recommendation was saved by ' +
-              newRecommendation.author.name +
-              ', with the following youtube ID: ' +
+            'A new recommendation was saved, and it has the following youtube ID: ' +
               newRecommendation.youtubeID
           );
           res.json({
             answer:
               'The recommendation ' +
               newRecommendation.name +
-              ' was added successfully to the future! Thanks ' +
-              newRecommendation.author.name +
-              ' for your support.',
+              ' was added successfully to the future! THanks',
           });
         });
       } else {
@@ -114,20 +84,8 @@ router.post('/', function (req, res) {
     });
 });
 
-router.get('/podcast', (req, res) => {
-  res.render('podcast');
-});
-
-router.post('/podcast', (req, res) => {
-  let podcastEmail = new PodcastEmail({ email: req.body.podcastEmail });
-  podcastEmail.save(() => {
-    res.redirect('/');
-  });
-});
-
 router.get('/thevoid', (req, res) => {
   if (req.user) {
-    console.log(req.user);
     if (req.user.username === 'chocapec') {
       console.log('The user is chocapec');
       Recommendation.find({}).then(allRecommendations => {
