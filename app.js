@@ -12,6 +12,8 @@ let express = require('express'),
   theSource = require('./middleware/theSource'),
   nodemailer = require('nodemailer'),
   seedDB = require('./seeds2');
+  cors = require('cors')
+
 
 let systemStatus;
 
@@ -26,8 +28,8 @@ mongoose.connect(process.env.DATABASE_MONGODB, {
 });
 
 app.use(express.json());
+app.use(cors())
 app.set('view engine', 'ejs');
-app.set('trust proxy', 1);
 
 app.use(express.urlencoded({ extended: true }));
 app.use(methodOverride('_method'));
@@ -52,5 +54,5 @@ app.use('/', indexRoutes);
 
 var port = process.env.PORT || 3000;
 app.listen(port, function () {
-  console.log('The Human Music Server Has Started in port', port);
+  console.log('The Infinite Jest Server Has Started in port', port);
 });

@@ -30,31 +30,34 @@ theSource.sendRecommendationToPast = () => {
 };
 
 theSource.checkSystem = () => {
-  console.log('inside the checkSystem function');
-  Recommendation.findOne({ status: 'present' })
-    .exec()
-    .then(presentRecommendation => {
-      if (presentRecommendation) {
-        let now = new Date().getTime();
-        let timestampDifference =
-          presentRecommendation.endingRecommendationTimestamp - now;
-        if (timestampDifference >= 0) {
-          console.log(
-            'A setTimeout will start now and be triggered in ' +
-              timestampDifference / 1000 +
-              ' seconds'
-          );
-          setTimeout(theSource.sendRecommendationToPast, timestampDifference);
+  try {
+    Recommendation.findOne({ status: 'present' })
+      .exec()
+      .then(presentRecommendation => {
+        if (presentRecommendation) {
+          let now = new Date().getTime();
+          let timestampDifference =
+            presentRecommendation.endingRecommendationTimestamp - now;
+          if (timestampDifference >= 0) {
+            console.log(
+              'A setTimeout will start now and be triggered in ' +
+                timestampDifference / 1000 +
+                ' seconds'
+            );
+            setTimeout(theSource.sendRecommendationToPast, timestampDifference);
+          } else {
+            theSource.sendRecommendationToPast();
+          }
         } else {
-          theSource.sendRecommendationToPast();
+          console.log(
+            'There was not a recommendation in the present. This is weird. The theMind function will be called'
+          );
+          theSource.theMind();
         }
-      } else {
-        console.log(
-          'There was not a recommendation in the present. This is weird. The theMind function will be called'
-        );
-        theSource.theMind();
-      }
-    });
+      });
+  } catch (error) {
+    console.log('there was an error');
+  }
 };
 
 theSource.theMind = () => {

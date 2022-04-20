@@ -32,6 +32,12 @@ router.get('/', (req, res) => {
     });
 });
 
+router.get('/api', (req, res) => {
+  console.log('the api route has been fetched');
+  const element = {wena:456};
+  res.json({element});
+});
+
 //CREATE - add new recommendation to db
 router.post('/', function (req, res) {
   let newRecommendation = new Recommendation();

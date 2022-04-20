@@ -1,3 +1,8 @@
 body {
   background-color: red;
 }
+
+iframe {
+  aspect-ratio: 16/9;
+  height: auto;
+}
