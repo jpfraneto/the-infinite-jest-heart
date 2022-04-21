@@ -12,8 +12,7 @@ let express = require('express'),
   theSource = require('./middleware/theSource'),
   nodemailer = require('nodemailer'),
   seedDB = require('./seeds2');
-  cors = require('cors')
-
+cors = require('cors');
 
 let systemStatus;
 
@@ -28,20 +27,20 @@ mongoose.connect(process.env.DATABASE_MONGODB, {
 });
 
 app.use(express.json());
-app.use(cors())
+app.use(cors());
 app.set('view engine', 'ejs');
 
 app.use(express.urlencoded({ extended: true }));
 app.use(methodOverride('_method'));
 app.use(express.static(__dirname + '/public'));
 
-if (process.env.NODE_ENV === 'production') {
-  app.use((req, res, next) => {
-    if (req.header('x-forwarded-proto') !== 'https')
-      res.redirect(`https://${req.header('host')}${req.url}`);
-    else next();
-  });
-}
+// if (process.env.NODE_ENV === 'production') {
+//   app.use((req, res, next) => {
+//     if (req.header('x-forwarded-proto') !== 'https')
+//       res.redirect(`http://${req.header('host')}${req.url}`);
+//     else next();
+//   });
+// }
 
 /////////////////////SET FUNCTIONS////////////////////////////
 
