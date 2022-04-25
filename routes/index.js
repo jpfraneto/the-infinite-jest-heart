@@ -32,6 +32,10 @@ router.get('/', (req, res) => {
     });
 });
 
+router.get('/new', (req, res) => {
+  res.render('new');
+});
+
 router.get('/api', (req, res) => {
   console.log('the api route has been fetched');
   const element = { wena: 456 };
@@ -39,53 +43,49 @@ router.get('/api', (req, res) => {
 });
 
 //CREATE - add new recommendation to db
-router.post('/api/new-recommendation/', function (req, res) {
-  let newRecommendation = new Recommendation();
-  newRecommendation.status = 'future';
-  newRecommendation.reviewed = true;
-  newRecommendation.recommendationDate = new Date();
-  let url, duration, name;
-  newRecommendation.youtubeID = req.body.newRecommendationID;
-  let apiKey = process.env.YOUTUBE_APIKEY;
-  let getRequestURL =
-    'https://www.googleapis.com/youtube/v3/videos?id=' +
-    newRecommendation.youtubeID +
-    '&key=' +
-    apiKey +
-    '&fields=items(id,snippet(title),statistics,%20contentDetails(duration))&part=snippet,statistics,%20contentDetails';
-  axios
-    .get(getRequestURL)
-    .then(function (response) {
-      if (response.data.items.length > 0) {
-        let durationISO = response.data.items[0].contentDetails.duration;
-        newRecommendation.duration = moment
-          .duration(durationISO, moment.ISO_8601)
-          .asMilliseconds();
-        newRecommendation.save(() => {
-          console.log(
-            'A new recommendation was saved, and it has the following youtube ID: ' +
-              newRecommendation.youtubeID
-          );
-          res.json({
-            answer:
-              'The recommendation ' +
-              newRecommendation.name +
-              ' was added successfully to the future! THanks',
-          });
-        });
-      } else {
+router.post('/api/new-recommendation/', async function (req, res) {
+  console.log('in hee!');
+  try {
+    let newRecommendation = new Recommendation();
+    newRecommendation.status = 'future';
+    newRecommendation.reviewed = true;
+    newRecommendation.recommendationDate = new Date();
+    let url, duration, name;
+    newRecommendation.youtubeID = req.body.url;
+    let apiKey = process.env.YOUTUBE_APIKEY;
+    let getRequestURL =
+      'https://www.googleapis.com/youtube/v3/videos?id=' +
+      newRecommendation.youtubeID +
+      '&key=' +
+      apiKey +
+      '&fields=items(id,snippet(title),statistics,%20contentDetails(duration))&part=snippet,statistics,%20contentDetails';
+    const response = await axios.get(getRequestURL);
+    if (response.data.items.length > 0) {
+      let durationISO = response.data.items[0].contentDetails.duration;
+      newRecommendation.duration = moment
+        .duration(durationISO, moment.ISO_8601)
+        .asMilliseconds();
+      newRecommendation.title = response.data.items[0].snippet.title;
+      newRecommendation.save(() => {
+        console.log(
+          'A new recommendation was saved, and it has the following youtube ID: ' +
+            newRecommendation.youtubeID
+        );
         res.json({
           answer:
-            'There was an error retrieving the recommendation from youtube. Please try again later, sorry for all the trouble that this means',
+            'The recommendation ' +
+            newRecommendation.title +
+            ' was added successfully to the future! THanks',
         });
-      }
-    })
-    .catch(() => {
-      res.json({
-        answer:
-          'There was an error retrieving the recommendation from youtube. Please try again later, sorry for all the trouble that this means',
       });
+    }
+  } catch (error) {
+    console.log('the error is: ', error);
+    res.json({
+      answer:
+        'There was an error retrieving the recommendation from youtube. Please try again later, sorry for all the trouble that this means',
     });
+  }
 });
 
 router.get('/thevoid', (req, res) => {
