@@ -34,15 +34,14 @@ router.get('/', (req, res) => {
 
 router.get('/api', (req, res) => {
   console.log('the api route has been fetched');
-  const element = {wena:456};
-  res.json({element});
+  const element = { wena: 456 };
+  res.json({ element });
 });
 
 //CREATE - add new recommendation to db
-router.post('/', function (req, res) {
+router.post('/api/new-recommendation/', function (req, res) {
   let newRecommendation = new Recommendation();
   newRecommendation.status = 'future';
-  newRecommendation.type = 'video';
   newRecommendation.reviewed = true;
   newRecommendation.recommendationDate = new Date();
   let url, duration, name;
@@ -108,90 +107,16 @@ router.get('/thevoid', (req, res) => {
 
 router.post('/nextRecommendationQuery', (req, res) => {
   let answer = {};
-  if (req.body.systemStatus === 'present') {
-    Recommendation.findOne({ status: 'present' })
-      .exec()
-      .then(nextPresentRecommendation => {
-        answer.recommendation = nextPresentRecommendation;
-        let elapsedTime =
-          new Date().getTime() -
-          nextPresentRecommendation.startingRecommendationTimestamp;
-        answer.elapsedSeconds = Math.floor(elapsedTime / 1000);
-        if (req.user) {
-          if (req.user.favoriteRecommendations) {
-            let indexOfRecommendation =
-              req.user.favoriteRecommendations.indexOf(
-                nextPresentRecommendation._id
-              );
-            if (indexOfRecommendation === -1) {
-              answer.isFavorited = false;
-            } else {
-              answer.isFavorited = true;
-            }
-          } else {
-            answer.isFavorited = false;
-          }
-        } else {
-          answer.isFavorited = undefined;
-        }
-        res.json(answer);
-      });
-  } else if (req.body.systemStatus === 'past') {
-    Recommendation.findOne({ youtubeID: req.body.videoID })
-      .exec()
-      .then(queriedVideo => {
-        Recommendation.findOne({ index: queriedVideo.index + 1 })
-          .exec()
-          .then(nextVideo => {
-            if (nextVideo) {
-              answer.recommendation = nextVideo;
-              if (req.user) {
-                if (req.user.favoriteRecommendations) {
-                  let indexOfRecommendation =
-                    req.user.favoriteRecommendations.indexOf(nextVideo._id);
-                  if (indexOfRecommendation === -1) {
-                    answer.isFavorited = false;
-                  } else {
-                    answer.isFavorited = true;
-                  }
-                } else {
-                  answer.isFavorited = false;
-                }
-              } else {
-                answer.isFavorited = undefined;
-              }
-              answer.elapsedSeconds = 0;
-              res.json(answer);
-            }
-          });
-      });
-  } else if (req.body.systemStatus === 'favorites') {
-    User.findOne({ username: req.user.username })
-      .populate('favoriteRecommendations')
-      .then(foundUser => {
-        let favoriteRecommendations = foundUser.favoriteRecommendations;
-        answer.recommendation =
-          favoriteRecommendations[
-            Math.floor(Math.random() * favoriteRecommendations.length)
-          ];
-        answer.isFavorited = true;
-        answer.elapsedSeconds = 0;
-        res.json(answer);
-      });
-  } else if (req.body.systemStatus === 'recommendations') {
-    User.findOne({ username: req.user.username })
-      .populate('recommendations')
-      .then(foundUser => {
-        let userRecommendations = foundUser.recommendations;
-        answer.recommendation =
-          userRecommendations[
-            Math.floor(Math.random() * userRecommendations.length)
-          ];
-        answer.isFavorited = true;
-        answer.elapsedSeconds = 0;
-        res.json(answer);
-      });
-  }
+  Recommendation.findOne({ status: 'present' })
+    .exec()
+    .then(nextPresentRecommendation => {
+      answer.recommendation = nextPresentRecommendation;
+      let elapsedTime =
+        new Date().getTime() -
+        nextPresentRecommendation.startingRecommendationTimestamp;
+      answer.elapsedSeconds = Math.floor(elapsedTime / 1000);
+      res.json(answer);
+    });
 });
 
 module.exports = router;

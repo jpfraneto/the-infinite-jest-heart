@@ -11,7 +11,8 @@ let express = require('express'),
   Cycle = require('./models/cycle'),
   theSource = require('./middleware/theSource'),
   nodemailer = require('nodemailer'),
-  seedDB = require('./seeds2');
+  seedDB = require('./seeds');
+// seedDB = require('./seeds2');
 cors = require('cors');
 
 let systemStatus;
